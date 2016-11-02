@@ -1,51 +1,84 @@
 <!DOCTYPE html>
- <html>
-     <head>
-         <meta charset="utf-8" />
-         <title>Arkanoid</title>
-         <style>
-             * {
-                 padding: 0;
-                 margin: 0;
-             }
-             canvas {
-                 background-color: #eee;
-                 display: block;
-                 margin: 50px auto;
-             }
-         </style>
-     </head>
-     <body>
-         
-         <canvas id="myCanvas" width="480" height="320"></canvas>
-         
-         <script>
-             
-             var canvas = document.getElementById("myCanvas");  //возвращаем значение канваса в переменную
-             var ctx = canvas.getContext("2d"); // определяем переменную для двухмерного рендеринга в канвасе
-             var x = canvas.width / 2; //центр по х окружности, по которой двигается шарик
-             var y = canvas.height - 150; //центр по у окружности, по которой двигается шарик
-             var ballRadius = 10; //радиус шарика
-             var currentAngle = 0; //текущий угол нахождения шарика в окружности
-            var radius = 100; //радиус окружности движения шарика
-             
-             function draw () { //создаем функцию прорисовки шарика
-                 var dx = Math.cos(currentAngle) * radius; //просчет позиции шарика по х, откоситель центра окружности и текущего угла
-                var dy = Math.sin(currentAngle) * radius; //просчет позиции шарика по у, откоситель центра окружности и текущего угла
-                 ctx.clearRect(0, 0, canvas.width, canvas.height); //очищаем канвас
-                 ctx.beginPath(); //создаем контур
-                 ctx.rect(x + dx, y + dy, 50, 50); //придаем форму квадрата контуру
-                 ctx.fillStyle = "green"; //устанавливаем цвет заливки шарика
-                 ctx.fill(); //рисуем шарик с заливкой внутренней области
-                 ctx.strokeStyle = "rgba(0, 0, 255, 0.5)"; //выбираем цвет и прозрачность для контура шарика
-                ctx.stroke(); //прорисовываем выбранный контур
-                 ctx.closePath(); //закрываем контур
-                 currentAngle += 0.1; //увеличиваем текущий угол нахождения шарика в окружности
-             }
-                 
-             setInterval(draw, 30); //выставляем интервал вызова функции прорисовки шарика на каждые 30 милисекунд
-                 
-         </script>
-         
-     </body>
- </html> 
+  <html>
+      <head>
+          <meta charset="utf-8" />
+          <title>Arkanoid</title>
+          <style>
+              * {
+                  padding: 0;
+                  margin: 0;
+              }
+              canvas {
+                  background-color: #eee;
+                  display: block;
+                  margin: 50px auto;
+              }
+          </style>
+      </head>
+      <body>
+          
+          <canvas id="myCanvas" width="480" height="320"></canvas>
+          
+          <script>
+              
+              var canvas = document.getElementById("myCanvas");  
+              var ctx = canvas.getContext("2d"); 
+              
+              var x = canvas.width / 2; 
+              var y = canvas.height - 30; 
+              var ballRadius = 10; 
+              var dx = 2; 
+              var dy = -2; 
+              
+              var brickRowCount = 3;
+              var brickColumnCount = 5;
+              var brickWidth = 75;
+              var brickHeight = 20;
+              var brickPadding = 10;
+              var brickOffsetTop = 30;
+              var brickOffsetLeft = 30;
+              var brickColor = ["blue", "red", "yellow"];
+              var brick = [];
+              
+              function drawBricks() {
+                  brick.number = 0;
+                  for (var r = 0; r < brickRowCount; r++) {
+                      for (var c = 0; c < brickColumnCount; c++) {
+                          var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                          var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                          if (brick.length != (brickRowCount * brickColumnCount) - 1) {
+                              brick.push(brickColor[Math.round(Math.random() * brickColor.length)]);
+                          }
+                          ctx.beginPath();
+                          ctx.rect(brickX, brickY, brickWidth,brickHeight);
+                          ctx.fillStyle = brick[(r * brickColumnCount) + c];
+                          ctx.fill();
+                          ctx.closePath();
+                      }
+                  }
+              }
+              
+              function draw () { 
+                  if (x + dx + ballRadius > canvas.width || x + dx < ballRadius) { 
+                      dx = -dx; 
+                  }
+                  if (y + dy + ballRadius > canvas.height || y + dy < ballRadius) { 
+                      dy = -dy; 
+                  }
+                  ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                  drawBricks();
+                  ctx.beginPath(); 
+                  ctx.arc(x, y, ballRadius, 0, Math.PI*2,false); 
+                  ctx.fillStyle = "green"; 
+                  ctx.fill(); 
+                  ctx.closePath(); 
+                  x += dx; 
+                  y += dy; 
+              }
+                  
+              setInterval(draw, 10); 
+                  
+          </script>
+          
+      </body>
+  </html> 
