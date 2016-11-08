@@ -74,6 +74,12 @@
                   ctx.fillText("Lives: " + lives, canvas.width - 70, 20);
               }
               
+              function drawHighScore() {
+                  if (document.cookie) {
+                    ctx.fillText("Best: " + document.cookie, 90, 20);
+                  }
+              }
+              
               function drawPaddle() {
                   ctx.beginPath();
                   ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
@@ -105,7 +111,15 @@
                                   bricks[r][c].status = 0;
                                   score++;
                                   if (score == brickRowCount * brickColumnCount) {
-                                      alert("YOU WIN");
+                                      if (document.cookie) {
+                                          if (document.cookie < score) {
+                                              document.cookie = score;
+                                          }
+                                      }
+                                      else {
+                                          document.cookie = score;
+                                      }
+                                      alert("YOU WIN Best score: " + document.cookie);
                                       document.location.reload();
                                   }
                               }   
@@ -119,7 +133,15 @@
                   if (y > canvas.height) {
                       lives--;
                       if(lives == 0) {
-                          alert("GAME OVER");
+                          if (document.cookie) {
+                            if (document.cookie < score) {
+                                document.cookie = score;
+                                }
+                            }
+                            else {
+                                document.cookie = score;
+                            }
+                          alert("GAME OVER Best score: " + document.cookie);
                           document.location.reload();
                           y = 0;
                       }
@@ -149,6 +171,7 @@
                       }
                   }
                   drawScore();
+                  drawHighScore();
                   drawLives();
                   drawPaddle();
                   collisionDetection();
